@@ -23,7 +23,7 @@ CREATE TABLE accountholder(
 DROP TABLE account
 GO
 CREATE TABLE account(
-	id INT NOT NULL PRIMARY KEY,
+	id INT IDENTITY(1,1) PRIMARY KEY,
 	balance INT NOT NULL
 )
 
