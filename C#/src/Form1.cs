@@ -122,7 +122,7 @@ namespace SQL_project_Admin_Interface
                 iResult = (int)result.Value;
                 this.nrOfAccounts = iResult;
                 account = new List<Account>();
-                int aBalance = 0;
+                float aBalance = 0;
                 int aIDnr = 0;
 
                 for (int i = 1; i <= iResult; i++)
@@ -142,15 +142,16 @@ namespace SQL_project_Admin_Interface
                     command.Parameters.Clear();
                     paraID.ParameterName = "@Aid";
                     paraID.Value = aIDnr;
+                    result.SqlDbType = SqlDbType.Float;
                     command.Parameters.Add(paraID);
                     command.Parameters.Add(result);
                     command.ExecuteNonQuery();
-                    aBalance = (int)result.Value;
-
+                    aBalance = (float)(double)result.Value;
                     account.Add(new Account(aIDnr, aBalance));
                 }
 
                 command.CommandText = "getAHACount";
+                result.SqlDbType = SqlDbType.Int;
                 command.Parameters.Clear();
                 command.Parameters.Add(result);
                 command.ExecuteNonQuery();
@@ -316,7 +317,7 @@ namespace SQL_project_Admin_Interface
             else
             {
                 int ahIDnr = int.Parse(AHlinkTB.Text);
-                int ahBalance = int.Parse(balanceTB.Text);
+                float ahBalance = float.Parse(balanceTB.Text);
                 bool exists = false;
                 for (int i = 0; i < accountHolder.Count && !exists; i++)
                     if (accountHolder[i].getID() == ahIDnr)
@@ -330,7 +331,7 @@ namespace SQL_project_Admin_Interface
                     sqlConn = new SqlConnection("Data Source=" + serverIP + ";Initial Catalog=" + dbName + ";User ID=" + dbName + ";Password=" + dbpw);
                     SqlParameter paraAHid = new SqlParameter("@ahID", SqlDbType.Int);
                     paraAHid.Value = ahIDnr;
-                    SqlParameter paraBalance = new SqlParameter("@balance", SqlDbType.Int);
+                    SqlParameter paraBalance = new SqlParameter("@balance", SqlDbType.Float);
                     paraBalance.Value = ahBalance;
                     command = new SqlCommand();
                     command.Connection = sqlConn;
@@ -428,10 +429,10 @@ namespace SQL_project_Admin_Interface
 
         private void calcInterestButton_Click(object sender, EventArgs e)
         {
-            int iResult = 0;
+            float iResult = 0;
             sqlConn = new SqlConnection("Data Source=" + serverIP + ";Initial Catalog=" + dbName + ";User ID=" + dbName + ";Password=" + dbpw);
             SqlParameter paraAid = new SqlParameter("@aID", SqlDbType.Int);
-            SqlParameter result = new SqlParameter("@return", SqlDbType.Int);
+            SqlParameter result = new SqlParameter("@return", SqlDbType.Float);
             result.Value = 0;
             result.Direction = ParameterDirection.Output;
             command = new SqlCommand();
@@ -453,7 +454,7 @@ namespace SQL_project_Admin_Interface
                 {
                     paraAid.Value = account[i].getID();
                     command.ExecuteNonQuery();
-                    iResult = (int)result.Value;
+                    iResult = (float)(double)result.Value;
                     account[i].setBalance(iResult);
                 }
                 MessageBox.Show("Interest has been added to all accounts.");
